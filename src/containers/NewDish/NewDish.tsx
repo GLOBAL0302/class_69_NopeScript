@@ -1,29 +1,32 @@
-import React, { useState } from 'react';
+import React from 'react';
 import DishForm from '../../components/DishForm/DishForm';
 import { ApiDish } from '../../types';
-import axiosApi from '../../axiosApi';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { selectCreateDishLoading } from '../../store/dishesSlice';
+import { createDish } from '../../store/dishesThunks';
 
 const NewDish: React.FC = () => {
   const navigate = useNavigate();
-  const [isCreating, setIsCreating] = useState(false);
+  const dispatch = useAppDispatch();
+  const isCreating = useAppSelector(selectCreateDishLoading);
 
-  const createDish = async (dish: ApiDish) => {
+  const onSubmit = async (dish: ApiDish) => {
     try {
-      setIsCreating(true);
-      await axiosApi.post('/dishes.json', dish);
+      await dispatch(createDish(dish)).unwrap();
+      console.log('after creating dish');
       navigate('/');
       toast.success('Dish created');
-    } finally {
-      setIsCreating(false);
+    } catch (error) {
+      console.error('here in catch');
     }
   };
 
   return (
-    <div className="row mt-2">
-      <div className="col">
-        <DishForm onSubmit={createDish} isLoading={isCreating} />
+    <div className='row mt-2'>
+      <div className='col'>
+        <DishForm onSubmit={onSubmit} isLoading={isCreating} />
       </div>
     </div>
   );

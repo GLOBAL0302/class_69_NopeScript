@@ -1,6 +1,5 @@
 import { CartDish, Dish } from '../types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../app/store';
 
 interface ICartState {
   cartDishes: CartDish[];
@@ -49,8 +48,11 @@ const cartSlice = createSlice({
       state.cartDishes = [];
     },
   },
+  selectors: {
+    selectCartDishes: (state) => state.cartDishes,
+  },
 });
 
 export const cartReducer = cartSlice.reducer;
 export const { addDish, clearCart, updateDishes } = cartSlice.actions;
-export const selectCartDishes = (state: RootState) => state.cart.cartDishes;
+export const { selectCartDishes } = cartSlice.selectors;
